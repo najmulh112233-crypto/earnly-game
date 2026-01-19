@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnly Official - Earn Coins</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        h1 { margin: 20px 0; color: #f6e05e; }
+        .coin {
+            font-size: 100px;
+            margin: 30px 0;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .coin:active { transform: scale(0.9); }
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        button {
+            background: #f6e05e;
+            border: none;
+            padding: 15px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🪙 Earnly Official</h1>
+        <div class="coin" onclick="tapCoin()">💰</div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <p>Coins</p>
+                <h2 id="coins">0</h2>
+            </div>
+            <div class="stat-box">
+                <p>Taps</p>
+                <h2 id="taps">0</h2>
+            </div>
+        </div>
+        
+        <button onclick="watchAd()">📺 Watch Ad (+100 Coins)</button>
+        <button onclick="saveGame()">💾 Save Game</button>
+        <button onclick="shareGame()">📢 Share</button>
+    </div>
+    
+    <script>
+        let coins = 0;
+        let taps = 0;
+        
+        function tapCoin() {
+            coins++;
+            taps++;
+            updateDisplay();
+        }
+        
+        function watchAd() {
+            alert('Ad loading...');
+            setTimeout(() => {
+                coins += 100;
+                updateDisplay();
+                alert('+100 coins!');
+                saveGame();
+            }, 2000);
+        }
+        
+        function saveGame() {
+            localStorage.setItem('earnlyCoins', coins);
+            localStorage.setItem('earnlyTaps', taps);
+            alert('Game saved!');
+        }
+        
+        function shareGame() {
+            const text = `I earned ${coins} coins in Earnly Official! Play: t.me/Earnly_Official_bot`;
+            navigator.clipboard.writeText(text);
+            alert('Link copied!');
+        }
+        
+        function updateDisplay() {
+            document.getElementById('coins').textContent = coins;
+            document.getElementById('taps').textContent = taps;
+        }
+        
+        // Load saved data
+        window.onload = function() {
+            const savedCoins = localStorage.getItem('earnlyCoins');
+            const savedTaps = localStorage.getItem('earnlyTaps');
+            if (savedCoins) coins = parseInt(savedCoins);
+            if (savedTaps) taps = parseInt(savedTaps);
+            updateDisplay();
+        };
+    </script>
+</body>
+</html>
