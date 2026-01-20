@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💰 Earnly Official - Watch Ads & Earn Money</title>
+    <title>Earnly - Watch Ads & Earn Money</title>
     
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -12,159 +12,431 @@
     <script src="https://webgl.unityads.unity3d.com/main.js"></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial; }
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; padding: 15px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Kalpurush', Arial; }
         
-        .container { max-width: 100%; margin: 0 auto; }
+        body {
+            background: linear-gradient(135deg, #1a237e 0%, #311b92 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
         
-        /* Header */
-        .header { text-align: center; padding: 25px 20px; background: rgba(255,255,255,0.1); border-radius: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); }
-        .logo { font-size: 45px; margin-bottom: 10px; }
-        .header h1 { font-size: 26px; color: #f6e05e; margin-bottom: 5px; }
+        /* Navigation */
+        .main-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            padding: 10px 5px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+        }
         
-        /* Balance */
-        .balance { background: linear-gradient(135deg, #f6e05e, #fbbf24); padding: 25px; border-radius: 20px; text-align: center; margin: 20px 0; box-shadow: 0 10px 30px rgba(246,224,94,0.3); }
-        .balance-amount { font-size: 48px; font-weight: 800; color: #2d3748; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        .nav-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: white;
+            padding: 10px 5px;
+            font-size: 12px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 0 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
         
-        /* Stats */
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 25px 0; }
-        .stat-card { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-value { font-size: 28px; font-weight: bold; color: #f6e05e; margin: 5px 0; }
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
         
-        /* Buttons */
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 15px; font-size: 17px; font-weight: 600; margin: 10px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .btn-primary { background: linear-gradient(135deg, #f6e05e, #fbbf24); color: #2d3748; box-shadow: 0 5px 20px rgba(246,224,94,0.4); }
-        .btn-secondary { background: linear-gradient(135deg, #4CAF50, #2E7D32); color: white; box-shadow: 0 5px 20px rgba(76,175,80,0.4); }
-        .btn-warning { background: linear-gradient(135deg, #2196F3, #0D47A1); color: white; box-shadow: 0 5px 20px rgba(33,150,243,0.4); }
+        .nav-btn.active {
+            background: rgba(0, 200, 83, 0.3);
+            color: #00e676;
+        }
         
-        /* Referral */
-        .referral { background: linear-gradient(135deg, #9C27B0, #6A1B9A); padding: 25px; border-radius: 20px; margin: 25px 0; }
-        .referral-link { background: rgba(255,255,255,0.15); padding: 15px; border-radius: 10px; margin: 20px 0; word-break: break-all; }
+        /* Sections */
+        .section {
+            display: none;
+            padding: 20px 15px;
+            animation: fadeIn 0.5s;
+        }
         
-        /* Notification */
-        .notification { position: fixed; top: 20px; right: 20px; background: #10B981; color: white; padding: 15px 25px; border-radius: 10px; display: none; z-index: 1000; box-shadow: 0 5px 15px rgba(16,185,129,0.4); animation: slideIn 0.5s; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Common Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: white;
+        }
+        
+        .balance-display {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin: 15px 0;
+            color: #f6e05e;
+            text-shadow: 0 0 20px rgba(246, 224, 94, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo">🪙</div>
-            <h1>Earnly Official</h1>
-            <p>Watch Ads & Earn Real Money</p>
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <button class="nav-btn active" onclick="showSection('home')">🏠 হোম</button>
+        <button class="nav-btn" onclick="showSection('stats')">📊 স্ট্যাটস</button>
+        <button class="nav-btn" onclick="showSection('referral')">👥 রেফারেল</button>
+        <button class="nav-btn" onclick="showSection('withdraw')">💳 উত্তোলন</button>
+        <button class="nav-btn" onclick="showSection('terms')">📋 শর্তাবলী</button>
+        <button class="nav-btn" onclick="showSection('help')">ℹ️ সহায়তা</button>
+        <button class="nav-btn" onclick="showSection('settings')">⚙️ সেটিংস</button>
+    </nav>
+    
+    <!-- Home Section -->
+    <div id="home" class="section active">
+        <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 40px;">🪙</div>
+            <h2>Earnly Official</h2>
+            <p style="opacity: 0.8; margin-top: 5px;">Watch Ads & Earn Money</p>
         </div>
         
-        <!-- Balance -->
-        <div class="balance">
-            <div style="font-size: 16px; color: #4a5568; margin-bottom: 10px;">Available Balance</div>
-            <div class="balance-amount">৳ <span id="balance">0.00</span></div>
-            <div style="margin-top: 10px; font-size: 14px; color: #4a5568;">
-                Points: <span id="points">0</span> | Today: ৳<span id="todayEarned">0.00</span>
-            </div>
-        </div>
-        
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div>📺</div>
-                <div class="stat-value" id="adsWatched">0</div>
-                <div style="font-size: 12px; opacity: 0.7;">Ads Watched</div>
-            </div>
-            <div class="stat-card">
-                <div>👥</div>
-                <div class="stat-value" id="referrals">0</div>
-                <div style="font-size: 12px; opacity: 0.7;">Referrals</div>
-            </div>
-            <div class="stat-card">
-                <div>💰</div>
-                <div class="stat-value">৳<span id="totalEarned">0</span></div>
-                <div style="font-size: 12px; opacity: 0.7;">Total Earned</div>
-            </div>
-            <div class="stat-card">
-                <div>🏦</div>
-                <div class="stat-value">৳<span id="withdrawn">0</span></div>
-                <div style="font-size: 12px; opacity: 0.7;">Withdrawn</div>
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 14px; opacity: 0.8;">আপনার ব্যালেন্স</div>
+            <div class="balance-display">৳ <span id="balance">0.00</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                <span>পয়েন্ট: <span id="points">0</span></span>
+                <span>আজ: ৳<span id="todayEarned">0.00</span></span>
             </div>
         </div>
         
-        <!-- Ad Section -->
-        <div class="header" style="margin-top: 20px;">
-            <h3>📺 Watch Ads & Earn</h3>
-            <p>Each ad gives ৳2.00 | Daily limit: 25 ads</p>
-            <div style="margin: 15px 0; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span>Progress</span>
-                    <span id="adCounter">0/25</span>
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">📺 এড দেখে আয় করুন</h3>
+            <p style="margin-bottom: 15px; font-size: 14px; opacity: 0.9;">
+                প্রতি এড = <strong>০.৫ পয়েন্ট</strong><br>
+                ৪০০০ পয়েন্ট = <strong>৳২০</strong><br>
+                দৈনিক লিমিট: ৫০ এড
+            </p>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>অগ্রগতি</span>
+                    <span id="adCounter">0/50</span>
                 </div>
                 <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-                    <div id="adProgressBar" style="height: 100%; background: #f6e05e; border-radius: 4px; width: 0%; transition: width 0.5s;"></div>
+                    <div id="adProgressBar" style="height: 100%; background: #00c853; border-radius: 4px; width: 0%;"></div>
                 </div>
             </div>
+            
             <button class="btn btn-primary" onclick="watchAd()">
                 <span>▶️</span>
-                <span>Watch Ad & Earn ৳2.00</span>
+                <span>এড দেখুন (০.৫ পয়েন্ট)</span>
             </button>
         </div>
+    </div>
+    
+    <!-- Stats Section -->
+    <div id="stats" class="section">
+        <div class="card">
+            <h3>📊 আপনার পরিসংখ্যান</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; color: #00e5ff;">📺</div>
+                    <div style="font-size: 20px; font-weight: bold;" id="totalAds">0</div>
+                    <div style="font-size: 12px; opacity: 0.7;">মোট এড</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; color: #f6e05e;">💰</div>
+                    <div style="font-size: 20px; font-weight: bold;">৳<span id="totalEarned">0</span></div>
+                    <div style="font-size: 12px; opacity: 0.7;">মোট আয়</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; color: #9C27B0;">👥</div>
+                    <div style="font-size: 20px; font-weight: bold;" id="totalRef">0</div>
+                    <div style="font-size: 12px; opacity: 0.7;">রেফারেল</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; color: #4CAF50;">🏦</div>
+                    <div style="font-size: 20px; font-weight: bold;">৳<span id="totalWithdrawn">0</span></div>
+                    <div style="font-size: 12px; opacity: 0.7;">উত্তোলন</div>
+                </div>
+            </div>
+        </div>
         
-        <!-- Referral -->
-        <div class="referral">
-            <h3 style="margin-bottom: 10px;">👥 Refer & Earn ৳100</h3>
-            <p style="margin-bottom: 15px; opacity: 0.9; font-size: 14px;">
-                Share your link and earn ৳100 per referral + 10% from their earnings!
+        <div class="card">
+            <h3>📈 আয়ের হিসাব</h3>
+            <div style="margin-top: 15px; font-size: 14px;">
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <span>১ এড</span>
+                    <span>= ০.৫ পয়েন্ট ≈ ৳০.০০২৫</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <span>১০ এড</span>
+                    <span>= ৫ পয়েন্ট ≈ ৳০.০২৫</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <span>১০০ এড</span>
+                    <span>= ৫০ পয়েন্ট ≈ ৳০.২৫</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                    <span>৪০০০ পয়েন্ট</span>
+                    <span>= ৳২০.০০</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Referral Section -->
+    <div id="referral" class="section">
+        <div class="card">
+            <h3>👥 বন্ধুকে আমন্ত্রণ করুন</h3>
+            <p style="margin: 15px 0; font-size: 14px;">
+                আপনার বন্ধুকে আমন্ত্রণ করে <strong>১০০ পয়েন্ট</strong> বোনাস পান!
             </p>
-            <div class="referral-link" id="refLink">
-                https://t.me/Earnly_Official_bot?start=ref_loading...
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                <div style="word-break: break-all; font-size: 14px; margin-bottom: 10px;" id="refLinkDisplay">
+                    লোড হচ্ছে...
+                </div>
+                <button onclick="copyRefLink()" style="width: 100%; padding: 10px; background: #2196F3; border: none; border-radius: 8px; color: white;">
+                    📋 লিংক কপি করুন
+                </button>
             </div>
-            <button class="btn btn-warning" onclick="copyRefLink()">
-                <span>📋</span>
-                <span>Copy Referral Link</span>
-            </button>
-            <button class="btn btn-secondary" onclick="shareRefLink()" style="margin-top: 10px;">
-                <span>📢</span>
-                <span>Share with Friends</span>
-            </button>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <div style="font-size: 24px; color: #f6e05e;">🎯</div>
+                <div style="font-size: 20px; font-weight: bold;" id="refCount">0</div>
+                <div style="font-size: 12px; opacity: 0.7;">মোট রেফারেল</div>
+            </div>
         </div>
-        
-        <!-- Withdrawal -->
-        <div class="header">
-            <h3>💳 Withdraw Money</h3>
-            <p>Minimum: ৳200 | Fee: ৳10</p>
-            <div style="display: flex; gap: 10px; margin: 20px 0;">
-                <button style="flex: 1; padding: 15px; background: #38a169; border: none; border-radius: 10px; color: white;" onclick="selectMethod('bkash')">bKash</button>
-                <button style="flex: 1; padding: 15px; background: #3182ce; border: none; border-radius: 10px; color: white;" onclick="selectMethod('nagad')">Nagad</button>
-                <button style="flex: 1; padding: 15px; background: #805ad5; border: none; border-radius: 10px; color: white;" onclick="selectMethod('rocket')">Rocket</button>
+    </div>
+    
+    <!-- Withdrawal Section -->
+    <div id="withdraw" class="section">
+        <div class="card">
+            <h3>💳 টাকা উত্তোলন</h3>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+                <div style="font-size: 14px; opacity: 0.8;">উত্তোলনযোগ্য পয়েন্ট</div>
+                <div style="font-size: 32px; font-weight: bold; color: #f6e05e; margin: 10px 0;" id="withdrawPoints">0</div>
+                <div style="font-size: 16px;">= ৳<span id="withdrawAmount">0.00</span></div>
             </div>
-            <button class="btn btn-warning" onclick="withdrawMoney()">
+            
+            <div style="margin: 20px 0;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>প্রয়োজনীয় পয়েন্ট:</span>
+                    <span>৪০০০ পয়েন্ট</span>
+                </div>
+                <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                    <div id="withdrawProgress" style="height: 100%; background: #f6e05e; border-radius: 4px; width: 0%;"></div>
+                </div>
+                <div style="text-align: center; font-size: 12px; margin-top: 5px; opacity: 0.7;">
+                    প্রয়োজন: <span id="neededPoints">4000</span> পয়েন্ট
+                </div>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <h4 style="margin-bottom: 10px;">পেমেন্ট মাধ্যম:</h4>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    <button onclick="selectMethod('bkash')" style="padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid transparent; border-radius: 8px; color: white;">
+                        bKash
+                    </button>
+                    <button onclick="selectMethod('nagad')" style="padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid transparent; border-radius: 8px; color: white;">
+                        Nagad
+                    </button>
+                    <button onclick="selectMethod('rocket')" style="padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid transparent; border-radius: 8px; color: white;">
+                        Rocket
+                    </button>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="requestWithdrawal()" id="withdrawBtn" disabled>
                 <span>💰</span>
-                <span>Withdraw Now</span>
+                <span>উত্তোলন করুন</span>
             </button>
+            
+            <div style="margin-top: 20px; font-size: 12px; opacity: 0.7; text-align: center;">
+                উত্তোলন ফি: ৳১০ | প্রক্রিয়াকরণ: ২৪-৪৮ ঘন্টা
+            </div>
         </div>
-        
-        <!-- Footer -->
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; opacity: 0.7;">
-            <p>© 2024 Earnly Official. All rights reserved.</p>
-            <p style="margin-top: 5px;">Contact: @EarnlySupport | Daily Payouts</p>
+    </div>
+    
+    <!-- Terms Section -->
+    <div id="terms" class="section">
+        <div class="card">
+            <h3>📋 শর্তাবলী</h3>
+            
+            <div style="margin-top: 15px; max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                <h4 style="margin: 15px 0 10px 0;">১. সার্ভিসের শর্ত</h4>
+                <p style="font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
+                    Earnly একটি এড-ভিত্তিক ইনকাম প্ল্যাটফর্ম। ব্যবহারকারীরা বিজ্ঞাপন দেখে পয়েন্ট অর্জন করে। প্রতি এডে ০.৫ পয়েন্ট যোগ হয়। ৪০০০ পয়েন্ট = ৳২০ টাকা উত্তোলনযোগ্য।
+                </p>
+                
+                <h4 style="margin: 15px 0 10px 0;">২. ব্যবহারকারীর দায়িত্ব</h4>
+                <p style="font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
+                    একাধিক অ্যাকাউন্ট তৈরি নিষিদ্ধ। বট/অটোমেশন নিষিদ্ধ। প্রতারণামূলক কার্যকলাপ নিষিদ্ধ। দৈনিক সর্বোচ্চ ৫০টি এড দেখানো যাবে।
+                </p>
+                
+                <h4 style="margin: 15px 0 10px 0;">৩. পেমেন্ট ও উত্তোলন</h4>
+                <p style="font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
+                    উত্তোলনের জন্য ন্যূনতম ৪০০০ পয়েন্ট প্রয়োজন। উত্তোলন প্রক্রিয়ায় ২৪-৪৮ ঘন্টা সময় লাগে। পেমেন্ট মাধ্যম: bKash, Nagad, Rocket। উত্তোলন ফি: ৳১০ প্রতি উত্তোলনে।
+                </p>
+                
+                <h4 style="margin: 15px 0 10px 0;">৪. যোগাযোগ</h4>
+                <p style="font-size: 14px; margin-bottom: 15px; line-height: 1.6;">
+                    সাপোর্ট: @EarnlySupport (Telegram)<br>
+                    ইমেইল: najmulh112233@gmail.com<br>
+                    মোবাইল: 01913621510<br>
+                    প্রতিক্রিয়া সময়: ২৪-৪৮ ঘন্টা
+                </p>
+                
+                <div style="background: rgba(0,200,83,0.1); padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid rgba(0,200,83,0.3);">
+                    <strong>🚨 গুরুত্বপূর্ণ:</strong> শর্তাবলী পরিবর্তনের অধিকার Earnly Management সংরক্ষিত।
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help Section -->
+    <div id="help" class="section">
+        <div class="card">
+            <h3>ℹ️ সহায়তা</h3>
+            
+            <div style="margin-top: 20px;">
+                <h4 style="margin-bottom: 10px;">সচরাচর জিজ্ঞাসা:</h4>
+                
+                <details style="margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px;">
+                    <summary style="font-weight: bold; cursor: pointer;">পয়েন্ট কিভাবে অর্জন করব?</summary>
+                    <p style="margin-top: 10px; font-size: 14px;">"এড দেখুন" বাটনে ক্লিক করে এড দেখুন। প্রতি এডে ০.৫ পয়েন্ট পাবেন।</p>
+                </details>
+                
+                <details style="margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px;">
+                    <summary style="font-weight: bold; cursor: pointer;">টাকা উত্তোলন করব কিভাবে?</summary>
+                    <p style="margin-top: 10px; font-size: 14px;">৪০০০ পয়েন্ট হলে উত্তোলন বিভাগে যান। পেমেন্ট মাধ্যম নির্বাচন করে মোবাইল নম্বর দিন।</p>
+                </details>
+                
+                <details style="margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px;">
+                    <summary style="font-weight: bold; cursor: pointer;">পেমেন্ট কত সময় লাগে?</summary>
+                    <p style="margin-top: 10px; font-size: 14px;">সাধারণত ২৪-৪৮ ঘন্টার মধ্যে পেমেন্ট করা হয়। শুক্রবার ও ছুটির দিন ব্যতীত।</p>
+                </details>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <h4>যোগাযোগ করুন:</h4>
+                <p style="margin: 10px 0; font-size: 14px;">
+                    📧 ইমেইল: najmulh112233@gmail.com<br>
+                    📱 মোবাইল: 01913621510<br>
+                    📢 টেলিগ্রাম: @EarnlySupport
+                </p>
+                <button onclick="openTelegram()" style="margin-top: 15px; padding: 12px 25px; background: #0088cc; border: none; border-radius: 8px; color: white; display: inline-flex; align-items: center; gap: 8px;">
+                    <span>✈️</span>
+                    <span>টেলিগ্রামে যোগাযোগ</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Section -->
+    <div id="settings" class="section">
+        <div class="card">
+            <h3>⚙️ সেটিংস</h3>
+            
+            <div style="margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <span>ব্যবহারকারী আইডি</span>
+                    <span style="font-family: monospace; font-size: 12px;" id="userIdDisplay">loading...</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <span>যোগদান তারিখ</span>
+                    <span style="font-size: 12px;" id="joinDateDisplay">loading...</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <span>ডাটা ব্যাকআপ</span>
+                    <button onclick="backupData()" style="padding: 8px 15px; background: #4CAF50; border: none; border-radius: 6px; color: white; font-size: 12px;">
+                        ব্যাকআপ নিন
+                    </button>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;">
+                    <span>ডাটা রিসেট</span>
+                    <button onclick="resetData()" style="padding: 8px 15px; background: #f44336; border: none; border-radius: 6px; color: white; font-size: 12px;">
+                        রিসেট করুন
+                    </button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+                <h4 style="margin-bottom: 10px;">অ্যাপ তথ্য</h4>
+                <div style="font-size: 12px; line-height: 1.6;">
+                    <div>সংস্করণ: 2.0.1</div>
+                    <div>শেষ আপডেট: আজ</div>
+                    <div>ডেভেলপার: Earnly Team</div>
+                    <div>ইমেইল: najmulh112233@gmail.com</div>
+                </div>
+            </div>
         </div>
     </div>
     
     <!-- Notification -->
-    <div class="notification" id="notification"></div>
+    <div id="notification" style="position: fixed; top: 20px; right: 20px; background: #00c853; color: white; padding: 15px 25px; border-radius: 10px; display: none; z-index: 1000; box-shadow: 0 5px 15px rgba(0,200,83,0.4);"></div>
     
     <script>
         // ==================== CONFIGURATION ====================
         const CONFIG = {
+            pointsPerAd: 0.5,          // প্রতি এডে ০.৫ পয়েন্ট
+            pointsToMoney: 4000,       // ৪০০০ পয়েন্ট = ৳২০
+            moneyPerPoint: 0.005,      // প্রতি পয়েন্টের মান
+            dailyAdLimit: 50,          // দৈনিক লিমিট
+            minWithdrawal: 4000,       // ন্যূনতম উত্তোলন পয়েন্ট
+            withdrawalFee: 10,         // উত্তোলন ফি (৳)
+            referralBonus: 100,        // রেফারেল বোনাস (পয়েন্ট)
             botUsername: 'Earnly_Official_bot',
-            adReward: 2.00,           // প্রতি এডে কত টাকা
-            dailyAdLimit: 25,         // দৈনিক এড লিমিট
-            minWithdrawal: 200,       // ন্যূনতম উত্তোলন
-            withdrawalFee: 10,        // উত্তোলন ফি
-            referralBonus: 100.00,    // রেফারেল বোনাস
-            commissionRate: 0.10      // কমিশন (10%)
+            supportContact: '01913621510',
+            supportEmail: 'najmulh112233@gmail.com'
         };
         
         // ==================== USER DATA ====================
         let userData = {
+            userId: '',
             balance: 0,
             points: 0,
             adsWatched: 0,
@@ -175,99 +447,119 @@
             referralEarnings: 0,
             dailyAds: { date: '', count: 0 },
             selectedMethod: 'bkash',
-            refCode: 'REF' + Math.random().toString(36).substr(2, 8).toUpperCase()
+            refCode: '',
+            joinDate: new Date().toISOString(),
+            completedTasks: []
         };
         
         // ==================== INITIALIZATION ====================
         function init() {
-            // Load saved data
+            // Load user data
             const saved = localStorage.getItem('earnlyData');
-            if (saved) userData = JSON.parse(saved);
+            if (saved) {
+                try {
+                    userData = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Error loading data:', e);
+                }
+            }
             
-            // Telegram Web App
+            // Generate user ID if not exists
+            if (!userData.userId) {
+                userData.userId = 'USER' + Date.now().toString().slice(-8);
+            }
+            
+            // Generate ref code if not exists
+            if (!userData.refCode) {
+                userData.refCode = 'REF' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            }
+            
+            // Initialize Telegram
             if (typeof Telegram !== 'undefined') {
                 Telegram.WebApp.ready();
                 Telegram.WebApp.expand();
-                Telegram.WebApp.setHeaderColor('#667eea');
-            }
-            
-            // Unity Ads
-            if (typeof unityAds !== 'undefined') {
-                unityAds.init('1234567', { testMode: true });
+                Telegram.WebApp.setHeaderColor('#1a237e');
             }
             
             // Check daily reset
             checkDailyReset();
             
             // Update display
-            updateDisplay();
+            updateAllDisplays();
             
-            // Welcome
-            setTimeout(() => showNotification('🎉 Welcome to Earnly Official!'), 1000);
+            // Welcome notification
+            setTimeout(() => showNotification('🎉 Earnly এ স্বাগতম!'), 1000);
+        }
+        
+        // ==================== NAVIGATION ====================
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Update section-specific displays
+            if (sectionId === 'withdraw') {
+                updateWithdrawalDisplay();
+            }
         }
         
         // ==================== AD SYSTEM ====================
         async function watchAd() {
-            // Check limit
+            // Check daily limit
             if (userData.dailyAds.count >= CONFIG.dailyAdLimit) {
-                showNotification('🎯 Daily limit reached! Come back tomorrow.');
+                showNotification('🎯 দৈনিক লিমিট শেষ! আগামীকাল আসুন।');
                 return;
             }
             
             // Show loading
             const btn = event.target;
             const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ Loading ad...';
+            btn.innerHTML = '⏳ এড লোড হচ্ছে...';
             btn.disabled = true;
             
             try {
-                // Show ad (Unity or simulated)
-                let adSuccess = false;
+                // Show ad (simulated for now)
+                await showSimulatedAd();
                 
-                if (typeof unityAds !== 'undefined' && unityAds.isReady()) {
-                    adSuccess = await showUnityAd();
-                }
+                // Add points
+                userData.dailyAds.count++;
+                userData.adsWatched++;
+                userData.points += CONFIG.pointsPerAd;
+                userData.balance = (userData.points * CONFIG.moneyPerPoint).toFixed(4);
+                userData.todayEarned += CONFIG.pointsPerAd * CONFIG.moneyPerPoint;
+                userData.totalEarned += CONFIG.pointsPerAd * CONFIG.moneyPerPoint;
                 
-                if (!adSuccess) {
-                    adSuccess = await showSimulatedAd();
-                }
+                // Save data
+                saveData();
+                updateAllDisplays();
                 
-                if (adSuccess) {
-                    // Add reward
-                    userData.dailyAds.count++;
-                    userData.adsWatched++;
-                    userData.balance += CONFIG.adReward;
-                    userData.todayEarned += CONFIG.adReward;
-                    userData.totalEarned += CONFIG.adReward;
-                    
-                    // Save
-                    saveData();
-                    updateDisplay();
-                    
-                    showNotification(`✅ +৳${CONFIG.adReward.toFixed(2)} earned!`);
-                }
+                showNotification(`✅ +${CONFIG.pointsPerAd} পয়েন্ট যোগ হয়েছে!`);
                 
             } catch (error) {
-                showNotification('❌ Ad failed. Try again.');
+                console.error('Ad error:', error);
+                showNotification('❌ এড লোড হয়নি। আবার চেষ্টা করুন।');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }
         
-        async function showUnityAd() {
-            return new Promise((resolve) => {
-                unityAds.show('rewardedVideo', {
-                    onComplete: () => resolve(true),
-                    onFailed: () => resolve(false)
-                });
-            });
-        }
-        
         async function showSimulatedAd() {
             return new Promise((resolve) => {
-                showNotification('📺 Playing ad...');
-                setTimeout(() => resolve(true), 3000);
+                showNotification('📺 এড চালু হয়েছে...');
+                setTimeout(() => resolve(), 3000);
             });
         }
         
@@ -275,87 +567,151 @@
         function copyRefLink() {
             const link = `https://t.me/${CONFIG.botUsername}?start=ref_${userData.refCode}`;
             navigator.clipboard.writeText(link);
-            showNotification('📋 Link copied! Share with friends.');
-        }
-        
-        function shareRefLink() {
-            const message = `💰 Earn money with Earnly Official!\n\nWatch ads and earn real money. Use my referral link for bonus:\n\nhttps://t.me/${CONFIG.botUsername}?start=ref_${userData.refCode}`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Earnly Official - Earn Money',
-                    text: message
-                }).then(() => {
-                    // Bonus for sharing
-                    userData.balance += 20;
-                    saveData();
-                    updateDisplay();
-                    showNotification('🎉 +৳20 sharing bonus!');
-                });
-            } else {
-                copyRefLink();
-            }
+            showNotification('📋 রেফারেল লিংক কপি হয়েছে!');
         }
         
         // ==================== WITHDRAWAL SYSTEM ====================
-        function selectMethod(method) {
-            userData.selectedMethod = method;
-            showNotification(`✅ Selected: ${method.toUpperCase()}`);
+        function updateWithdrawalDisplay() {
+            const points = userData.points;
+            const amount = (points * CONFIG.moneyPerPoint).toFixed(2);
+            const progress = Math.min((points / CONFIG.minWithdrawal) * 100, 100);
+            const needed = CONFIG.minWithdrawal - points;
+            
+            document.getElementById('withdrawPoints').textContent = points.toFixed(1);
+            document.getElementById('withdrawAmount').textContent = amount;
+            document.getElementById('withdrawProgress').style.width = `${progress}%`;
+            document.getElementById('neededPoints').textContent = needed > 0 ? needed : 0;
+            
+            // Enable/disable withdraw button
+            const btn = document.getElementById('withdrawBtn');
+            if (points >= CONFIG.minWithdrawal) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+            }
         }
         
-        function withdrawMoney() {
-            if (userData.balance < CONFIG.minWithdrawal) {
-                showNotification(`⚠️ Minimum withdrawal is ৳${CONFIG.minWithdrawal}`);
+        function selectMethod(method) {
+            userData.selectedMethod = method;
+            showNotification(`✅ নির্বাচিত: ${method.toUpperCase()}`);
+        }
+        
+        function requestWithdrawal() {
+            if (userData.points < CONFIG.minWithdrawal) {
+                showNotification(`⚠️ ন্যূনতম ${CONFIG.minWithdrawal} পয়েন্ট প্রয়োজন!`);
                 return;
             }
             
-            const netAmount = userData.balance - CONFIG.withdrawalFee;
-            const method = userData.selectedMethod;
+            const amount = (userData.points * CONFIG.moneyPerPoint).toFixed(2);
+            const netAmount = (amount - CONFIG.withdrawalFee).toFixed(2);
             
-            const phone = prompt(`Enter your ${method} number (11 digits):\n\nYou will receive: ৳${netAmount.toFixed(2)}\nFee: ৳${CONFIG.withdrawalFee.toFixed(2)}`, '01XXXXXXXXX');
+            const phone = prompt(
+                `উত্তোলন অনুরোধ:\n\n` +
+                `পয়েন্ট: ${userData.points.toFixed(1)}\n` +
+                `টাকা: ৳${amount}\n` +
+                `ফি: ৳${CONFIG.withdrawalFee}\n` +
+                `প্রাপ্তব্য: ৳${netAmount}\n\n` +
+                `আপনার ${userData.selectedMethod} নম্বর দিন (১১ ডিজিট):`,
+                '01913621510'
+            );
             
             if (!phone || phone.length !== 11) {
-                showNotification('❌ Invalid number!');
+                showNotification('❌ সঠিক মোবাইল নম্বর দিন!');
                 return;
             }
             
-            if (confirm(`Confirm withdrawal of ৳${netAmount.toFixed(2)} to ${phone}?`)) {
-                // Process
-                showNotification('⏳ Processing withdrawal...');
+            if (confirm(`৳${netAmount} ${userData.selectedMethod} এ পাঠানো হবে?\nনম্বর: ${phone}`)) {
+                // Process withdrawal
+                showNotification('⏳ উত্তোলন প্রক্রিয়াকরণ...');
                 
+                // Simulate processing
                 setTimeout(() => {
-                    userData.withdrawn += netAmount;
+                    // Update user data
+                    userData.withdrawn += parseFloat(netAmount);
+                    userData.points = 0;
                     userData.balance = 0;
                     userData.dailyAds.count = 0;
                     
+                    // Save data
                     saveData();
-                    updateDisplay();
+                    updateAllDisplays();
                     
-                    alert(`✅ Withdrawal successful!\n\n৳${netAmount.toFixed(2)} will be sent within 24 hours.\n\nTransaction ID: EAR${Date.now()}\nContact @EarnlySupport for help.`);
+                    // Show success message
+                    alert(
+                        `✅ উত্তোলন সফল!\n\n` +
+                        `ট্রানজেকশন আইডি: EAR${Date.now()}\n` +
+                        `পরিমাণ: ৳${netAmount}\n` +
+                        `মাধ্যম: ${userData.selectedMethod}\n` +
+                        `নম্বর: ${phone}\n\n` +
+                        `টাকা ২৪-৪৮ ঘন্টার মধ্যে পাঠানো হবে।\n` +
+                        `সাহায্যের জন্য: ${CONFIG.supportContact}`
+                    );
                     
-                    showNotification('✅ Withdrawal processed!');
+                    showNotification('✅ উত্তোলন রিকুয়েস্ট পাঠানো হয়েছে!');
                 }, 2000);
             }
         }
         
-        // ==================== UTILITIES ====================
-        function updateDisplay() {
-            document.getElementById('balance').textContent = userData.balance.toFixed(2);
-            document.getElementById('points').textContent = userData.points;
-            document.getElementById('todayEarned').textContent = userData.todayEarned.toFixed(2);
-            document.getElementById('adsWatched').textContent = userData.adsWatched;
-            document.getElementById('referrals').textContent = userData.referrals;
-            document.getElementById('totalEarned').textContent = userData.totalEarned.toFixed(2);
-            document.getElementById('withdrawn').textContent = userData.withdrawn.toFixed(2);
+        // ==================== SETTINGS FUNCTIONS ====================
+        function backupData() {
+            const backup = {
+                ...userData,
+                backupDate: new Date().toISOString()
+            };
             
-            // Ad progress
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `earnly_backup_${Date.now()}.json`;
+            a.click();
+            
+            showNotification('📁 ডাটা ব্যাকআপ ডাউনলোড হয়েছে!');
+        }
+        
+        function resetData() {
+            if (confirm('🚨 সমস্ত ডাটা মুছে ফেলবেন?\nএটি পূর্বাবস্থায় ফেরানো যাবে না।')) {
+                localStorage.removeItem('earnlyData');
+                location.reload();
+            }
+        }
+        
+        function openTelegram() {
+            window.open('https://t.me/EarnlySupport', '_blank');
+        }
+        
+        // ==================== UTILITY FUNCTIONS ====================
+        function updateAllDisplays() {
+            // Update all numeric displays
+            document.getElementById('balance').textContent = parseFloat(userData.balance).toFixed(4);
+            document.getElementById('points').textContent = userData.points.toFixed(1);
+            document.getElementById('todayEarned').textContent = (userData.todayEarned * CONFIG.moneyPerPoint).toFixed(4);
+            document.getElementById('totalAds').textContent = userData.adsWatched;
+            document.getElementById('totalEarned').textContent = (userData.totalEarned * CONFIG.moneyPerPoint).toFixed(2);
+            document.getElementById('totalRef').textContent = userData.referrals;
+            document.getElementById('totalWithdrawn').textContent = userData.withdrawn.toFixed(2);
+            
+            // Update ad progress
             const progress = (userData.dailyAds.count / CONFIG.dailyAdLimit) * 100;
             document.getElementById('adCounter').textContent = `${userData.dailyAds.count}/${CONFIG.dailyAdLimit}`;
             document.getElementById('adProgressBar').style.width = `${Math.min(progress, 100)}%`;
             
-            // Referral link
-            document.getElementById('refLink').textContent = 
+            // Update referral link
+            document.getElementById('refLinkDisplay').textContent = 
                 `https://t.me/${CONFIG.botUsername}?start=ref_${userData.refCode}`;
+            document.getElementById('refCount').textContent = userData.referrals;
+            
+            // Update settings
+            document.getElementById('userIdDisplay').textContent = userData.userId;
+            document.getElementById('joinDateDisplay').textContent = 
+                new Date(userData.joinDate).toLocaleDateString('bn-BD');
+            
+            // Update withdrawal display if section is active
+            if (document.getElementById('withdraw').classList.contains('active')) {
+                updateWithdrawalDisplay();
+            }
         }
         
         function saveData() {
@@ -366,7 +722,10 @@
             const notif = document.getElementById('notification');
             notif.textContent = message;
             notif.style.display = 'block';
-            setTimeout(() => notif.style.display = 'none', 3000);
+            
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
         }
         
         function checkDailyReset() {
@@ -379,9 +738,9 @@
             }
         }
         
-        // Start
+        // Start the app
         window.onload = init;
-        setInterval(checkDailyReset, 60000);
+        setInterval(checkDailyReset, 60000); // Check every minute
     </script>
 </body>
-    </html>
+</html>
