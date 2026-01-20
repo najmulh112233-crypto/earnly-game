@@ -3,124 +3,552 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earnly Official - Earn Coins</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>EarnCash - Watch Ads & Earn Money</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: Arial, sans-serif;
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 400px;
-            margin: auto;
-            text-align: center;
-            background: rgba(255,255,255,0.1);
-            padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-        h1 { margin: 20px 0; color: #f6e05e; }
-        .coin {
-            font-size: 100px;
-            margin: 30px 0;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .coin:active { transform: scale(0.9); }
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .stat-box {
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 10px;
-        }
-        button {
-            background: #f6e05e;
-            border: none;
-            padding: 15px;
-            margin: 10px 0;
-            width: 100%;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui; }
+        body { background: linear-gradient(135deg, #1a237e, #311b92); color: white; min-height: 100vh; padding: 20px; }
+        
+        .container { max-width: 450px; margin: auto; }
+        
+        /* Header */
+        .header { text-align: center; padding: 25px; background: rgba(255,255,255,0.1); border-radius: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); }
+        .logo { font-size: 40px; margin-bottom: 10px; }
+        .balance { font-size: 42px; font-weight: 800; color: #00e676; margin: 15px 0; text-shadow: 0 0 20px rgba(0,230,118,0.5); }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }
+        .stat-card { background: rgba(255,255,255,0.08); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .stat-value { font-size: 28px; font-weight: bold; color: #00e5ff; }
+        .stat-label { font-size: 13px; opacity: 0.8; margin-top: 5px; }
+        
+        /* Ad Sections */
+        .section { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 18px; }
+        .section-title span { display: flex; align-items: center; gap: 10px; }
+        
+        /* Progress Bar */
+        .progress-container { margin: 20px 0; }
+        .progress-label { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+        .progress-bar { height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #00e676, #00c853); border-radius: 6px; width: 0%; transition: width 0.5s; }
+        
+        /* Buttons */
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 15px; font-size: 17px; font-weight: 600; margin: 10px 0; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .btn-primary { background: linear-gradient(135deg, #00c853, #00e676); color: white; box-shadow: 0 5px 20px rgba(0,200,83,0.4); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,200,83,0.6); }
+        .btn-secondary { background: linear-gradient(135deg, #2979ff, #2962ff); color: white; box-shadow: 0 5px 20px rgba(41,121,255,0.4); }
+        .btn-warning { background: linear-gradient(135deg, #ff9100, #ff6d00); color: white; box-shadow: 0 5px 20px rgba(255,145,0,0.4); }
+        .btn-danger { background: linear-gradient(135deg, #ff3d00, #dd2c00); color: white; box-shadow: 0 5px 20px rgba(255,61,0,0.4); }
+        
+        /* Referral Section */
+        .referral-box { background: linear-gradient(135deg, #aa00ff, #6200ea); padding: 25px; border-radius: 20px; margin: 25px 0; }
+        .referral-link { background: rgba(255,255,255,0.15); padding: 15px; border-radius: 10px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; font-family: monospace; }
+        .copy-btn { background: rgba(255,255,255,0.2); border: none; padding: 10px 20px; border-radius: 8px; color: white; cursor: pointer; }
+        
+        /* Tasks */
+        .task-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .task-info { flex: 1; }
+        .task-reward { background: #ffd600; color: #000; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
+        
+        /* Withdrawal Methods */
+        .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .method-card { background: rgba(255,255,255,0.08); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .method-card:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+        .method-icon { font-size: 30px; margin-bottom: 10px; }
+        
+        /* Notification */
+        .notification { position: fixed; top: 20px; right: 20px; background: #00c853; color: white; padding: 15px 25px; border-radius: 10px; display: none; z-index: 1000; box-shadow: 0 5px 15px rgba(0,200,83,0.4); animation: slideIn 0.5s; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        /* Footer */
+        .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 12px; opacity: 0.7; }
     </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Unity Ads SDK -->
+    <script src="https://webgl.unityads.unity3d.com/main.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>🪙 Earnly Official</h1>
-        <div class="coin" onclick="tapCoin()">💰</div>
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">💰</div>
+            <h1>EarnCash BD</h1>
+            <p>Watch Ads & Earn Real Money</p>
+            <div class="balance">৳ <span id="balance">0.00</span></div>
+            <div style="font-size: 14px; opacity: 0.8;">Available Balance</div>
+        </div>
         
-        <div class="stats">
-            <div class="stat-box">
-                <p>Coins</p>
-                <h2 id="coins">0</h2>
+        <!-- Daily Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="todayEarned">৳0</div>
+                <div class="stat-label">Today's Earnings</div>
             </div>
-            <div class="stat-box">
-                <p>Taps</p>
-                <h2 id="taps">0</h2>
+            <div class="stat-card">
+                <div class="stat-value" id="adsWatched">0</div>
+                <div class="stat-label">Ads Watched</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalEarned">৳0</div>
+                <div class="stat-label">Total Earned</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="withdrawn">৳0</div>
+                <div class="stat-label">Withdrawn</div>
             </div>
         </div>
         
-        <button onclick="watchAd()">📺 Watch Ad (+100 Coins)</button>
-        <button onclick="saveGame()">💾 Save Game</button>
-        <button onclick="shareGame()">📢 Share</button>
+        <!-- Daily Ads Section -->
+        <div class="section">
+            <div class="section-title">
+                <span>📺 Daily Ads Watching</span>
+                <span style="background: #00c853; padding: 5px 15px; border-radius: 20px; font-size: 14px;" id="adCounter">0/20</span>
+            </div>
+            <p style="margin-bottom: 15px; opacity: 0.9;">Watch ads and earn money. Daily limit: 20 ads</p>
+            
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>Progress</span>
+                    <span id="adProgressText">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="adProgressBar"></div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="watchAd()">
+                <span>▶️</span>
+                <span>Watch Ad & Earn ৳15.00</span>
+            </button>
+            
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="watchMultipleAds(5)">
+                    <span>⏩</span>
+                    <span>Watch 5 Ads</span>
+                </button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="watchMultipleAds(10)">
+                    <span>⏭️</span>
+                    <span>Watch 10 Ads</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Referral System -->
+        <div class="referral-box">
+            <h3 style="margin-bottom: 10px;">👥 Refer & Earn Big!</h3>
+            <p style="margin-bottom: 15px; opacity: 0.9;">Share your link and earn <strong>৳150.00</strong> per referral</p>
+            
+            <div class="referral-link">
+                <span id="refLink">https://t.me/Earnly_Official_bot?start=ref123456</span>
+                <button class="copy-btn" onclick="copyRefLink()">Copy</button>
+            </div>
+            
+            <button class="btn btn-warning" onclick="shareRefLink()">
+                <span>📢</span>
+                <span>Share Referral Link</span>
+            </button>
+            
+            <div class="stats-grid" style="margin-top: 20px;">
+                <div class="stat-card">
+                    <div class="stat-value" id="directRef">0</div>
+                    <div class="stat-label">Direct Referrals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="refEarnings">৳0</div>
+                    <div class="stat-label">Referral Earnings</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Complete Tasks -->
+        <div class="section">
+            <div class="section-title">
+                <span>✅ Complete Tasks & Earn</span>
+            </div>
+            
+            <div class="task-item">
+                <div class="task-info">
+                    <div style="font-weight: bold;">Join Telegram Channel</div>
+                    <div style="font-size: 13px; opacity: 0.8;">Join our official channel</div>
+                </div>
+                <button class="task-reward" onclick="completeTask('telegram', 50)">৳50</button>
+            </div>
+            
+            <div class="task-item">
+                <div class="task-info">
+                    <div style="font-weight: bold;">Follow on Facebook</div>
+                    <div style="font-size: 13px; opacity: 0.8;">Like & follow our page</div>
+                </div>
+                <button class="task-reward" onclick="completeTask('facebook', 30)">৳30</button>
+            </div>
+            
+            <div class="task-item">
+                <div class="task-info">
+                    <div style="font-weight: bold;">Share on WhatsApp</div>
+                    <div style="font-size: 13px; opacity: 0.8;">Share with 5 friends</div>
+                </div>
+                <button class="task-reward" onclick="completeTask('whatsapp', 100)">৳100</button>
+            </div>
+            
+            <div class="task-item">
+                <div class="task-info">
+                    <div style="font-weight: bold;">Watch Video Tutorial</div>
+                    <div style="font-size: 13px; opacity: 0.8;">Watch 5-min tutorial</div>
+                </div>
+                <button class="task-reward" onclick="completeTask('tutorial', 25)">৳25</button>
+            </div>
+        </div>
+        
+        <!-- Withdrawal Methods -->
+        <div class="section">
+            <div class="section-title">
+                <span>💳 Withdraw Your Earnings</span>
+            </div>
+            
+            <p style="margin-bottom: 20px;">Minimum withdrawal: <strong>৳300</strong></p>
+            
+            <div class="method-grid">
+                <div class="method-card" onclick="selectMethod('bkash')">
+                    <div class="method-icon">🏦</div>
+                    <div style="font-weight: bold;">bKash</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Instant</div>
+                </div>
+                
+                <div class="method-card" onclick="selectMethod('nagad')">
+                    <div class="method-icon">📱</div>
+                    <div style="font-weight: bold;">Nagad</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Fast</div>
+                </div>
+                
+                <div class="method-card" onclick="selectMethod('rocket')">
+                    <div class="method-icon">🚀</div>
+                    <div style="font-weight: bold;">Rocket</div>
+                    <div style="font-size: 12px; opacity: 0.8;">DBBL</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-danger" onclick="withdrawMoney()">
+                <span>💰</span>
+                <span>Withdraw Now</span>
+            </button>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2024 EarnCash BD. All rights reserved.</p>
+            <p style="margin-top: 5px;">Contact: @EarnlySupport | Daily Payouts Guaranteed</p>
+        </div>
     </div>
     
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+    
     <script>
-        let coins = 0;
-        let taps = 0;
-        
-        function tapCoin() {
-            coins++;
-            taps++;
-            updateDisplay();
-        }
-        
-        function watchAd() {
-            alert('Ad loading...');
-            setTimeout(() => {
-                coins += 100;
-                updateDisplay();
-                alert('+100 coins!');
-                saveGame();
-            }, 2000);
-        }
-        
-        function saveGame() {
-            localStorage.setItem('earnlyCoins', coins);
-            localStorage.setItem('earnlyTaps', taps);
-            alert('Game saved!');
-        }
-        
-        function shareGame() {
-            const text = `I earned ${coins} coins in Earnly Official! Play: t.me/Earnly_Official_bot`;
-            navigator.clipboard.writeText(text);
-            alert('Link copied!');
-        }
-        
-        function updateDisplay() {
-            document.getElementById('coins').textContent = coins;
-            document.getElementById('taps').textContent = taps;
-        }
-        
-        // Load saved data
-        window.onload = function() {
-            const savedCoins = localStorage.getItem('earnlyCoins');
-            const savedTaps = localStorage.getItem('earnlyTaps');
-            if (savedCoins) coins = parseInt(savedCoins);
-            if (savedTaps) taps = parseInt(savedTaps);
-            updateDisplay();
+        // ==================== USER DATA ====================
+        let userData = {
+            balance: 0,
+            adsWatched: 0,
+            todayEarned: 0,
+            totalEarned: 0,
+            withdrawn: 0,
+            directRef: 0,
+            refEarnings: 0,
+            completedTasks: [],
+            lastReset: '',
+            refCode: generateRefCode(),
+            selectedMethod: 'bkash'
         };
+        
+        // ==================== UNITY ADS SETUP ====================
+        function initUnityAds() {
+            if (typeof unityAds !== 'undefined') {
+                unityAds.init('YOUR_GAME_ID', {
+                    testMode: true, // Production এ false করুন
+                    onComplete: () => console.log('Unity Ads ready'),
+                    onFailed: (err) => console.log('Unity Ads failed:', err)
+                });
+            }
+        }
+        
+        // ==================== LOAD/SAVE DATA ====================
+        function loadData() {
+            const saved = localStorage.getItem('earnCashData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.assign(userData, data);
+            }
+            updateDisplay();
+        }
+        
+        function saveData() {
+            localStorage.setItem('earnCashData', JSON.stringify(userData));
+        }
+        
+        // ==================== DISPLAY UPDATE ====================
+        function updateDisplay() {
+            // Update all display elements
+            document.getElementById('balance').textContent = userData.balance.toFixed(2);
+            document.getElementById('todayEarned').textContent = '৳' + userData.todayEarned.toFixed(2);
+            document.getElementById('adsWatched').textContent = userData.adsWatched;
+            document.getElementById('totalEarned').textContent = '৳' + userData.totalEarned.toFixed(2);
+            document.getElementById('withdrawn').textContent = '৳' + userData.withdrawn.toFixed(2);
+            document.getElementById('directRef').textContent = userData.directRef;
+            document.getElementById('refEarnings').textContent = '৳' + userData.refEarnings.toFixed(2);
+            
+            // Update ad counter and progress
+            const adCounter = document.getElementById('adCounter');
+            const adProgressBar = document.getElementById('adProgressBar');
+            const adProgressText = document.getElementById('adProgressText');
+            
+            const progress = (userData.adsWatched / 20) * 100;
+            adCounter.textContent = `${userData.adsWatched}/20`;
+            adProgressBar.style.width = `${progress}%`;
+            adProgressText.textContent = `${Math.round(progress)}%`;
+            
+            // Update referral link
+            document.getElementById('refLink').textContent = 
+                `https://t.me/Earnly_Official_bot?start=ref_${userData.refCode}`;
+        }
+        
+        // ==================== AD WATCHING ====================
+        async function watchAd() {
+            // Check daily limit
+            if (userData.adsWatched >= 20) {
+                showNotification('🎯 Daily ad limit reached! Come back tomorrow.');
+                return;
+            }
+            
+            // Show loading
+            showNotification('📺 Loading ad...');
+            
+            try {
+                // Try Unity Ads
+                if (typeof unityAds !== 'undefined' && unityAds.isReady()) {
+                    await new Promise((resolve, reject) => {
+                        unityAds.show('rewarded', {
+                            onComplete: resolve,
+                            onFailed: reject
+                        });
+                    });
+                } else {
+                    // Simulate ad watching (3 seconds)
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                }
+                
+                // Add earnings
+                const earnings = 15.00;
+                userData.adsWatched++;
+                userData.balance += earnings;
+                userData.todayEarned += earnings;
+                userData.totalEarned += earnings;
+                
+                updateDisplay();
+                saveData();
+                showNotification(`✅ +৳${earnings.toFixed(2)} added!`);
+                
+            } catch (error) {
+                console.error('Ad error:', error);
+                // Fallback reward
+                const fallbackEarnings = 5.00;
+                userData.balance += fallbackEarnings;
+                userData.todayEarned += fallbackEarnings;
+                userData.totalEarned += fallbackEarnings;
+                
+                updateDisplay();
+                saveData();
+                showNotification(`🎁 +৳${fallbackEarnings.toFixed(2)} (fallback)`);
+            }
+        }
+        
+        // Watch multiple ads
+        async function watchMultipleAds(count) {
+            if (userData.adsWatched + count > 20) {
+                showNotification(`⚠️ Can only watch ${20 - userData.adsWatched} more ads today.`);
+                return;
+            }
+            
+            for (let i = 0; i < count; i++) {
+                await watchAd();
+                // Wait 1 second between ads
+                if (i < count - 1) await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+        
+        // ==================== REFERRAL SYSTEM ====================
+        function generateRefCode() {
+            return Math.random().toString(36).substr(2, 8).toUpperCase();
+        }
+        
+        function copyRefLink() {
+            const link = `https://t.me/Earnly_Official_bot?start=ref_${userData.refCode}`;
+            navigator.clipboard.writeText(link);
+            showNotification('📋 Referral link copied!');
+        }
+        
+        function shareRefLink() {
+            const message = `💰 Earn money by watching ads!\n\nJoin using my referral link and get ৳50 bonus:\n\nhttps://t.me/Earnly_Official_bot?start=ref_${userData.refCode}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'EarnCash - Watch Ads & Earn Money',
+                    text: message
+                }).then(() => {
+                    // Give bonus for sharing
+                    userData.balance += 10;
+                    userData.totalEarned += 10;
+                    updateDisplay();
+                    saveData();
+                });
+            } else {
+                navigator.clipboard.writeText(message);
+                showNotification('📢 Message copied! Share with friends.');
+            }
+        }
+        
+        // ==================== TASKS SYSTEM ====================
+        function completeTask(taskId, reward) {
+            if (userData.completedTasks.includes(taskId)) {
+                showNotification('✅ Task already completed!');
+                return;
+            }
+            
+            userData.completedTasks.push(taskId);
+            userData.balance += reward;
+            userData.totalEarned += reward;
+            
+            updateDisplay();
+            saveData();
+            showNotification(`🎉 Task completed! +৳${reward}`);
+        }
+        
+        // ==================== WITHDRAWAL SYSTEM ====================
+        function selectMethod(method) {
+            userData.selectedMethod = method;
+            showNotification(`Selected: ${method.toUpperCase()}`);
+        }
+        
+        function withdrawMoney() {
+            const minWithdrawal = 300;
+            
+            if (userData.balance < minWithdrawal) {
+                showNotification(`⚠️ Minimum withdrawal is ৳${minWithdrawal}. You have ৳${userData.balance.toFixed(2)}`);
+                return;
+            }
+            
+            const methodNames = {
+                bkash: 'bKash',
+                nagad: 'Nagad',
+                rocket: 'Rocket'
+            };
+            
+            const method = methodNames[userData.selectedMethod] || 'bKash';
+            const phone = prompt(`Enter your ${method} number (11 digits):`);
+            
+            if (!phone || phone.length !== 11) {
+                showNotification('❌ Invalid phone number!');
+                return;
+            }
+            
+            const amount = userData.balance;
+            
+            // In real app, send to backend for processing
+            alert(`📋 Withdrawal Request Submitted!\n\nAmount: ৳${amount.toFixed(2)}\nMethod: ${method}\nNumber: ${phone}\n\nPayment will be processed within 24 hours.`);
+            
+            // Update user data
+            userData.withdrawn += amount;
+            userData.balance = 0;
+            userData.adsWatched = 0;
+            userData.todayEarned = 0;
+            
+            updateDisplay();
+            saveData();
+            showNotification('✅ Withdrawal request sent successfully!');
+        }
+        
+        // ==================== UTILITY FUNCTIONS ====================
+        function showNotification(message) {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.style.display = 'block';
+            
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
+        }
+        
+        function resetDailyData() {
+            const today = new Date().toDateString();
+            
+            if (userData.lastReset !== today) {
+                userData.adsWatched = 0;
+                userData.todayEarned = 0;
+                userData.completedTasks = [];
+                userData.lastReset = today;
+                updateDisplay();
+                saveData();
+            }
+        }
+        
+        // ==================== INITIALIZATION ====================
+        window.onload = function() {
+            // Load saved data
+            loadData();
+            
+            // Initialize Unity Ads
+            initUnityAds();
+            
+            // Reset daily data if needed
+            resetDailyData();
+            
+            // Set up Telegram Web App
+            if (typeof Telegram !== 'undefined') {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+                Telegram.WebApp.setHeaderColor('#1a237e');
+                Telegram.WebApp.setBackgroundColor('#1a237e');
+            }
+            
+            // Check for referral in URL
+            checkReferral();
+            
+            // Welcome message
+            setTimeout(() => {
+                showNotification('🎉 Welcome to EarnCash! Watch ads and earn money.');
+            }, 1000);
+            
+            // Auto-reset daily at midnight
+            setInterval(resetDailyData, 60000);
+        };
+        
+        // Check if user came from referral
+        function checkReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const startParam = urlParams.get('start');
+            
+            if (startParam && startParam.startsWith('ref_')) {
+                const referrerCode = startParam.replace('ref_', '');
+                
+                // In real app, send to backend to track referral
+                console.log('Referred by:', referrerCode);
+                
+                // Give welcome bonus to new user
+                userData.balance += 50;
+                userData.totalEarned += 50;
+                updateDisplay();
+                saveData();
+                
+                showNotification('🎁 Welcome bonus ৳50 added!');
+            }
+        }
+        
+        // Telegram sharing
+        function shareOnTelegram() {
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp.shareText) {
+                Telegram.WebApp.shareText(
+                    `💰 Earn money by watching ads! Join now: https://t.me/Earnly_Official_bot`
+                );
+            }
+        }
     </script>
 </body>
-</html>
+    </html>
