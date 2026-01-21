@@ -5,87 +5,796 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💰 Earnly Pro - Premium Earning Platform</title>
     
-    <!-- Telegram Web App SDK -->
+    <!-- Telegram Web App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Unity Ads SDK -->
-    <script src="https://webgl.unityads.unity3d.com/main.js"></script>
-    
     <style>
-        /* আপনার পূর্বের সকল CSS কোড এখানে রাখুন */
-        /* ... পুরোনো CSS কোড ... */
-        
-        /* নতুন Unity Ad Container */
-        .unity-ad-container {
-            width: 100%;
-            height: 250px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 15px 0;
+        /* ========== CSS START ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #7C3AED;
+            --primary-dark: #5B21B6;
+            --secondary: #10B981;
+            --secondary-dark: #059669;
+            --accent: #F59E0B;
+            --danger: #EF4444;
+            --dark: #1E293B;
+            --darker: #0F172A;
+            --light: #F1F5F9;
+            --gray: #64748B;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
             position: relative;
-            border: 2px dashed var(--primary);
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .logo {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .app-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #FDE68A, #FBBF24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(124, 58, 237, 0.3);
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #7C3AED, #10B981);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .balance-label {
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .balance-amount {
+            font-size: 46px;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(135deg, #FDE68A, #FBBF24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+        }
+
+        .balance-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
+            border-color: #7C3AED;
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        .stat-card-label {
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Ad Card */
+        .ad-card {
+            background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.9));
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid rgba(124,58,237,0.3);
+            position: relative;
+        }
+
+        .ad-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #7C3AED, #10B981);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .ad-title {
+            color: #F59E0B;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .rate-display {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .rate-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .rate-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #F59E0B;
+        }
+
+        .rate-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 25px 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7C3AED, #10B981);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 10px 0;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .ad-loading {
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7C3AED, #5B21B6);
+            color: white;
+            box-shadow: 0 5px 15px rgba(124,58,237,0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16,185,129,0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            box-shadow: 0 5px 15px rgba(245,158,11,0.4);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30,41,59,0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            padding: 12px 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #64748B;
+            padding: 10px 5px;
+            font-size: 12px;
             text-align: center;
-            padding: 20px;
+            border-radius: 12px;
+            margin: 0 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
-        
-        .ad-placeholder {
-            font-size: 48px;
+
+        .nav-btn.active {
+            background: rgba(124,58,237,0.2);
+            color: #7C3AED;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 8px 20px rgba(16,185,129,0.4);
+            animation: slideIn 0.5s, fadeOut 0.5s 2.5s forwards;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+
+        /* Ad Overlay */
+        .ad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15,23,42,0.98);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .ad-box {
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            border-radius: 24px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 3px solid #7C3AED;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .ad-header {
+            margin-bottom: 25px;
+        }
+
+        .ad-emoji {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .ad-title {
+            color: #F59E0B;
+            font-size: 24px;
             margin-bottom: 10px;
         }
-        
-        .ad-loading-text {
-            color: var(--gray);
-            font-size: 14px;
+
+        .ad-timer {
+            font-size: 52px;
+            font-weight: 800;
+            color: #F59E0B;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
         }
+
+        .ad-reward {
+            font-size: 22px;
+            color: #10B981;
+            margin: 15px 0;
+        }
+
+        .ad-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .ad-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ad-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Loader */
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #7C3AED;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .balance-amount {
+                font-size: 38px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ad-timer {
+                font-size: 44px;
+            }
+        }
+        /* ========== CSS END ========== */
     </style>
 </head>
 <body>
-    <!-- আপনার পূর্বের HTML কোড -->
-
+    <!-- ========== HTML START ========== -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">💎</div>
+            <h1 class="app-title">Earnly Pro</h1>
+            <p style="opacity: 0.9; font-size: 14px;">Premium Earning Platform</p>
+        </div>
+        
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div class="balance-label">Total Balance</div>
+            <div class="balance-amount">৳ <span id="balance">0.00</span></div>
+            <div class="balance-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="points">0</div>
+                    <div class="stat-label">Points</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">৳<span id="todayEarned">0.00</span></div>
+                    <div class="stat-label">Today</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="adsCount">0</div>
+                    <div class="stat-label">Ads</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-card-value">৳<span id="totalEarned">0</span></div>
+                <div class="stat-card-label">Total Earned</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-card-value" id="referrals">0</div>
+                <div class="stat-card-label">Referrals</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🏦</div>
+                <div class="stat-card-value">৳<span id="withdrawn">0</span></div>
+                <div class="stat-card-label">Withdrawn</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-card-value" id="streak">0</div>
+                <div class="stat-card-label">Day Streak</div>
+            </div>
+        </div>
+        
+        <!-- Ad Card -->
+        <div class="ad-card">
+            <h3 class="ad-title">🎬 Watch & Earn</h3>
+            <p style="margin-bottom: 20px; opacity: 0.9; font-size: 14px;">
+                Watch advertisements and earn <strong>0.5 points</strong> per ad.
+            </p>
+            
+            <div class="rate-display">
+                <div class="rate-item">
+                    <div class="rate-value">0.5</div>
+                    <div class="rate-label">Points/Ad</div>
+                </div>
+                <div class="rate-item">
+                    <div class="rate-value">4000</div>
+                    <div class="rate-label">= ৳20</div>
+                </div>
+                <div class="rate-item">
+                    <div class="rate-value" id="dailyCount">0/50</div>
+                    <div class="rate-label">Today</div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span>Daily Progress</span>
+                    <span id="progressText">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressLabel">Watch more ads to earn more!</div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="watchAd()" id="adButton">
+                <span>▶️</span>
+                <span>Watch Ad & Earn 0.5 Points</span>
+            </button>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="btn btn-secondary" onclick="showReferral()">
+                <span>👥</span>
+                <span>Refer & Earn</span>
+            </button>
+            <button class="btn btn-warning" onclick="showWithdraw()">
+                <span>💰</span>
+                <span>Withdraw</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="nav">
+        <button class="nav-btn active" onclick="showSection('home')">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-btn" onclick="showSection('stats')">
+            <span class="nav-icon">📊</span>
+            <span>Stats</span>
+        </button>
+        <button class="nav-btn" onclick="showSection('referral')">
+            <span class="nav-icon">👥</span>
+            <span>Referral</span>
+        </button>
+        <button class="nav-btn" onclick="showSection('withdraw')">
+            <span class="nav-icon">💳</span>
+            <span>Withdraw</span>
+        </button>
+        <button class="nav-btn" onclick="showSection('settings')">
+            <span class="nav-icon">⚙️</span>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+    
+    <!-- Sections -->
+    <div id="referral" class="section">
+        <div class="container">
+            <div class="ad-card">
+                <h3 class="ad-title">👥 Referral System</h3>
+                <p style="margin-bottom: 20px; opacity: 0.9;">
+                    Share your referral link and earn <strong>100 points</strong> for each friend who joins!
+                </p>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                    <div style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Your Referral Link:</div>
+                    <div id="referralLink" style="font-size: 16px; word-break: break-all; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 15px;">
+                        Loading...
+                    </div>
+                    <button class="btn btn-secondary" onclick="copyReferralLink()">
+                        <span>📋</span>
+                        <span>Copy Link</span>
+                    </button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 25px;">
+                    <div style="font-size: 36px; font-weight: bold; color: #F59E0B;" id="referralCount">0</div>
+                    <div style="font-size: 14px; opacity: 0.7;">Total Referrals</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="withdraw" class="section">
+        <div class="container">
+            <div class="ad-card">
+                <h3 class="ad-title">💰 Withdraw Money</h3>
+                <p style="margin-bottom: 20px; opacity: 0.9;">
+                    Withdraw your earnings to bKash, Nagad, or Rocket.
+                </p>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                    <div style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Available Balance:</div>
+                    <div style="font-size: 32px; font-weight: bold; color: #F59E0B; text-align: center; margin: 15px 0;">
+                        ৳ <span id="withdrawBalance">0.00</span>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <div style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Withdrawal Method:</div>
+                        <select style="width: 100%; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 10px; font-size: 16px;">
+                            <option value="bkash">bKash</option>
+                            <option value="nagad">Nagad</option>
+                            <option value="rocket">Rocket</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <div style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Account Number:</div>
+                        <input type="text" placeholder="01XXXXXXXXX" style="width: 100%; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 10px; font-size: 16px;">
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <div style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Amount (Minimum: ৳20):</div>
+                        <input type="number" placeholder="20" min="20" style="width: 100%; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 10px; font-size: 16px;">
+                    </div>
+                    
+                    <button class="btn btn-warning" onclick="requestWithdraw()">
+                        <span>💰</span>
+                        <span>Withdraw Now</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="stats" class="section">
+        <div class="container">
+            <div class="ad-card">
+                <h3 class="ad-title">📊 Detailed Statistics</h3>
+                
+                <div style="margin: 20px 0;">
+                    <div style="display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span>Total Ads Watched</span>
+                        <span style="font-weight: bold;" id="statAds">0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span>Total Points Earned</span>
+                        <span style="font-weight: bold;" id="statPoints">0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span>Account Created</span>
+                        <span style="font-weight: bold;" id="statCreated">Today</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 15px;">
+                        <span>User ID</span>
+                        <span style="font-weight: bold; font-size: 12px;" id="userId">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="settings" class="section">
+        <div class="container">
+            <div class="ad-card">
+                <h3 class="ad-title">⚙️ Settings & More</h3>
+                
+                <div style="margin: 20px 0;">
+                    <button class="btn" style="background: rgba(255,255,255,0.1); margin-bottom: 10px;" onclick="resetData()">
+                        <span>🔄</span>
+                        <span>Reset Data</span>
+                    </button>
+                    
+                    <button class="btn" style="background: rgba(255,255,255,0.1); margin-bottom: 10px;" onclick="exportData()">
+                        <span>💾</span>
+                        <span>Export Data</span>
+                    </button>
+                    
+                    <button class="btn" style="background: rgba(255,255,255,0.1);" onclick="showSupport()">
+                        <span>📞</span>
+                        <span>Contact Support</span>
+                    </button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-size: 12px; opacity: 0.7;">Version 1.0.0</div>
+                    <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">© 2024 Earnly Pro. All rights reserved.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ========== HTML END ========== -->
+    
+    <!-- ========== JAVASCRIPT START ========== -->
     <script>
-        // ==================== CONFIGURATION ====================
+        // Configuration
         const CONFIG = {
             pointsPerAd: 0.5,
-            pointsToMoney: 4000,
-            moneyPerPoint: 0.005,
+            moneyPerPoint: 0.005, // 4000 points = ৳20
             dailyAdLimit: 50,
-            minWithdrawal: 4000,
-            withdrawalFee: 10,
-            referralBonus: 100,
-            botUsername: 'Earnly_Official_bot',
-            // Unity Ads Configuration
-            unityGameId: '18968367782959',
-            testMode: true, // Production-এ false করুন
-            adRewardAmount: 0.5,
-            minAdInterval: 30000 // 30 সেকেন্ড
+            minWithdrawal: 4000, // points
+            withdrawalFee: 10, // percentage
+            referralBonus: 100, // points
+            botUsername: 'Earnly_Official_bot' // CHANGE THIS
         };
         
-        // ==================== UNITY ADS CONFIGURATION ====================
-        const UNITY_CONFIG = {
-            gameId: CONFIG.unityGameId,
-            testMode: CONFIG.testMode,
-            onInitComplete: () => {
-                console.log('✅ Unity Ads Ready!');
-                showNotification('🎬 Ads are ready to watch!');
-                document.getElementById('adButton').disabled = false;
-                document.getElementById('adButton').innerHTML = '▶️ Watch Ad & Earn 0.5 Points';
-            },
-            onInitFailed: (error) => {
-                console.error('❌ Unity Ads Failed:', error);
-                showNotification('⚠️ Ads system loading...');
-                // Fallback to custom ads
-                setTimeout(initializeFallbackAds, 2000);
-            }
-        };
-        
-        // ==================== VARIABLES ====================
+        // User Data
         let userData = {
             userId: '',
             balance: 0,
@@ -101,69 +810,66 @@
             lastAdTime: 0
         };
         
-        let isUnityAdsReady = false;
-        let isShowingAd = false;
-        
-        // ==================== UNITY ADS FUNCTIONS ====================
-        function initializeUnityAds() {
-            console.log('🚀 Initializing Unity Ads...');
+        // Initialize App
+        function init() {
+            console.log('🚀 Earnly Pro Starting...');
             
-            if (typeof unityAds !== 'undefined') {
+            // Load saved data
+            const saved = localStorage.getItem('earnlyProData');
+            if (saved) {
                 try {
-                    unityAds.init(UNITY_CONFIG.gameId, {
-                        testMode: UNITY_CONFIG.testMode,
-                        onComplete: UNITY_CONFIG.onInitComplete,
-                        onFailed: UNITY_CONFIG.onInitFailed
-                    });
-                    isUnityAdsReady = true;
-                } catch (error) {
-                    console.error('Unity init error:', error);
-                    loadFallbackAds();
+                    userData = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Error loading data:', e);
                 }
-            } else {
-                console.error('Unity SDK not loaded, retrying...');
-                setTimeout(loadUnitySDK, 3000);
             }
+            
+            // Generate User ID if new
+            if (!userData.userId) {
+                userData.userId = 'EP' + Date.now().toString().slice(-8) + Math.random().toString(36).substr(2, 4).toUpperCase();
+            }
+            
+            // Telegram Web App
+            if (typeof Telegram !== 'undefined') {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+                Telegram.WebApp.setHeaderColor('#7C3AED');
+                Telegram.WebApp.setBackgroundColor('#0F172A');
+                Telegram.WebApp.enableClosingConfirmation();
+            }
+            
+            // Check daily reset
+            checkDailyReset();
+            
+            // Update display
+            updateDisplay();
+            
+            // Set referral link
+            document.getElementById('referralLink').textContent = 
+                `https://t.me/${CONFIG.botUsername}?start=${userData.userId}`;
+            
+            // Set user ID
+            document.getElementById('userId').textContent = userData.userId.slice(0, 12) + '...';
+            
+            // Show welcome
+            setTimeout(() => showNotification('💎 Welcome to Earnly Pro! Start earning now!'), 1000);
+            
+            // Update sections
+            updateSections();
         }
         
-        function loadUnitySDK() {
-            const script = document.createElement('script');
-            script.src = 'https://webgl.unityads.unity3d.com/main.js';
-            script.onload = () => {
-                console.log('✅ Unity SDK loaded');
-                initializeUnityAds();
-            };
-            script.onerror = () => {
-                console.error('❌ Failed to load Unity SDK');
-                loadFallbackAds();
-            };
-            document.head.appendChild(script);
-        }
-        
-        function loadFallbackAds() {
-            console.log('🔄 Loading fallback ad system...');
-            // Monetag বা অন্য কোন Ads system
-            initializeMonetagAds();
-        }
-        
-        function initializeMonetagAds() {
-            // Monetag fallback system
-            console.log('Monetag fallback activated');
-            // আপনি এখানে Monetag বা অন্য Ad network যোগ করতে পারেন
-        }
-        
-        // ==================== WATCH AD FUNCTION ====================
+        // Watch Ad Function
         async function watchAd() {
             // Check if already showing ad
-            if (isShowingAd) {
-                showNotification('⚠️ Please wait, ad is loading...');
+            if (isAdActive) {
+                showNotification('⏳ Please wait, ad is loading...');
                 return;
             }
             
-            // Check cooldown
+            // Check cooldown (30 seconds)
             const now = Date.now();
-            if (now - userData.lastAdTime < CONFIG.minAdInterval) {
-                const remaining = Math.ceil((CONFIG.minAdInterval - (now - userData.lastAdTime)) / 1000);
+            if (now - userData.lastAdTime < 30000 && userData.lastAdTime !== 0) {
+                const remaining = Math.ceil((30000 - (now - userData.lastAdTime)) / 1000);
                 showNotification(`⏰ Please wait ${remaining} seconds`);
                 return;
             }
@@ -179,34 +885,30 @@
             const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<span class="loader"></span> Loading Ad...';
-            isShowingAd = true;
+            isAdActive = true;
             
             try {
-                let adWatched = false;
+                // Show ad
+                const watched = await showAdOverlay();
                 
-                // Try Unity Ads first
-                if (isUnityAdsReady && typeof unityAds !== 'undefined') {
-                    adWatched = await showUnityAd();
-                }
-                
-                // If Unity failed, show custom ad
-                if (!adWatched) {
-                    adWatched = await showCustomAd();
-                }
-                
-                if (adWatched) {
+                if (watched) {
                     // Reward user
-                    rewardUserForAd();
+                    rewardUser();
+                    
+                    // Update display
+                    updateDisplay();
+                    updateSections();
+                    saveData();
+                    
                     showNotification(`✅ +${CONFIG.pointsPerAd} points earned!`);
                     
-                    // Update last ad time
-                    userData.lastAdTime = Date.now();
-                    
-                    // Save and update
-                    saveData();
-                    updateDisplay();
+                    // Success animation
+                    btn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+                    setTimeout(() => {
+                        btn.style.background = 'linear-gradient(135deg, #7C3AED, #5B21B6)';
+                    }, 1000);
                 } else {
-                    showNotification('❌ Ad not completed');
+                    showNotification('❌ Ad not completed. Try again!');
                 }
                 
             } catch (error) {
@@ -217,81 +919,38 @@
                 setTimeout(() => {
                     btn.disabled = false;
                     btn.innerHTML = originalText;
-                    isShowingAd = false;
+                    isAdActive = false;
                 }, 2000);
             }
         }
         
-        function showUnityAd() {
-            return new Promise((resolve) => {
-                if (!isUnityAdsReady || typeof unityAds === 'undefined') {
-                    resolve(false);
-                    return;
-                }
-                
-                try {
-                    unityAds.show({
-                        onCompleted: () => {
-                            console.log('🎉 Unity Ad completed');
-                            resolve(true);
-                        },
-                        onFailed: (error) => {
-                            console.log('Unity Ad failed:', error);
-                            resolve(false);
-                        },
-                        onSkipped: () => {
-                            console.log('User skipped Unity ad');
-                            resolve(false);
-                        }
-                    });
-                } catch (error) {
-                    console.error('Unity show error:', error);
-                    resolve(false);
-                }
-            });
-        }
+        let isAdActive = false;
         
-        function rewardUserForAd() {
-            userData.dailyAds.count++;
-            userData.adsWatched++;
-            userData.points += CONFIG.pointsPerAd;
-            userData.balance = (userData.points * CONFIG.moneyPerPoint).toFixed(4);
-            userData.todayEarned += CONFIG.pointsPerAd * CONFIG.moneyPerPoint;
-            userData.totalEarned += CONFIG.pointsPerAd * CONFIG.moneyPerPoint;
-            
-            // Update streak
-            updateStreak();
-        }
-        
-        // ==================== CUSTOM AD FUNCTION (Backup) ====================
-        async function showCustomAd() {
+        // Show Ad Overlay
+        function showAdOverlay() {
             return new Promise((resolve) => {
-                // Create overlay
                 const overlay = document.createElement('div');
                 overlay.className = 'ad-overlay';
                 overlay.innerHTML = `
-                    <div class="ad-container">
+                    <div class="ad-box">
                         <div class="ad-header">
-                            <h3>🎬 Earnly Advertisement</h3>
+                            <div class="ad-emoji">📺</div>
+                            <div class="ad-title">Earnly Advertisement</div>
                         </div>
-                        <div class="ad-body">
-                            <div class="unity-ad-container" id="unityAdPlaceholder">
-                                <div class="ad-loading">
-                                    <div class="ad-placeholder">📺</div>
-                                    <div class="ad-loading-text">Loading advertisement...</div>
-                                </div>
-                            </div>
-                            <div class="ad-reward">Earn ${CONFIG.pointsPerAd} Points</div>
-                            <div class="ad-timer" id="adTimer">10</div>
-                            <p style="margin: 20px 0; opacity: 0.9;">Watch for 10 seconds to earn</p>
-                            <div style="display: flex; gap: 10px; margin-top: 30px;">
-                                <button id="skipBtn" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 10px;">
-                                    Skip (No Reward)
-                                </button>
-                                <button id="closeAdBtn" style="flex: 1; padding: 12px; background: var(--secondary); border: none; color: white; border-radius: 10px; display: none;">
-                                    ✅ Get ${CONFIG.pointsPerAd} Points
-                                </button>
-                            </div>
+                        
+                        <div class="ad-reward">Earn ${CONFIG.pointsPerAd} Points</div>
+                        
+                        <div class="ad-timer" id="adTimer">10</div>
+                        
+                        <p style="opacity: 0.8; margin-bottom: 20px;">Watch for 10 seconds to earn points</p>
+                        
+                        <div class="ad-buttons">
+                            <button class="ad-btn" id="skipBtn" style="background: rgba(255,255,255,0.1); color: white;">
+                                Skip (No Reward)
+                            </button>
+                            <button class="ad-btn" id="completeBtn" style="background: linear-gradient(135deg, #10B981, #059669); color: white; display: none;">
+                                ✅ Get ${CONFIG.pointsPerAd} Points
+                            </button>
                         </div>
                     </div>
                 `;
@@ -299,148 +958,154 @@
                 document.body.appendChild(overlay);
                 
                 let seconds = 10;
-                const timerElement = document.getElementById('adTimer');
+                const timer = document.getElementById('adTimer');
                 const skipBtn = document.getElementById('skipBtn');
-                const closeBtn = document.getElementById('closeAdBtn');
+                const completeBtn = document.getElementById('completeBtn');
                 
                 // Countdown
-                const timer = setInterval(() => {
+                const countdown = setInterval(() => {
                     seconds--;
-                    timerElement.textContent = seconds;
+                    timer.textContent = seconds;
                     
                     if (seconds <= 0) {
-                        clearInterval(timer);
+                        clearInterval(countdown);
                         skipBtn.style.display = 'none';
-                        closeBtn.style.display = 'block';
+                        completeBtn.style.display = 'block';
                     }
                 }, 1000);
                 
-                // Skip
+                // Skip button
                 skipBtn.onclick = () => {
-                    clearInterval(timer);
+                    clearInterval(countdown);
                     document.body.removeChild(overlay);
                     resolve(false);
                 };
                 
-                // Complete
-                closeBtn.onclick = () => {
-                    clearInterval(timer);
+                // Complete button
+                completeBtn.onclick = () => {
+                    clearInterval(countdown);
                     document.body.removeChild(overlay);
                     resolve(true);
                 };
                 
-                // Try to load Unity ad in background
-                if (isUnityAdsReady) {
-                    setTimeout(() => {
-                        try {
-                            unityAds.show({
-                                onCompleted: () => {
-                                    // Unity ad completed automatically
-                                    clearInterval(timer);
-                                    skipBtn.style.display = 'none';
-                                    closeBtn.style.display = 'block';
-                                    document.getElementById('adTimer').textContent = '0';
-                                }
-                            });
-                        } catch (e) {
-                            console.log('Background Unity ad failed');
-                        }
-                    }, 1000);
-                }
+                // Close on overlay click
+                overlay.onclick = (e) => {
+                    if (e.target === overlay) {
+                        clearInterval(countdown);
+                        document.body.removeChild(overlay);
+                        resolve(false);
+                    }
+                };
             });
         }
         
-        // ==================== INITIALIZATION ====================
-        function init() {
-            // Load user data
-            const saved = localStorage.getItem('earnlyProData');
-            if (saved) userData = JSON.parse(saved);
+        // Reward User
+        function rewardUser() {
+            userData.dailyAds.count++;
+            userData.adsWatched++;
+            userData.points += CONFIG.pointsPerAd;
+            userData.balance = userData.points * CONFIG.moneyPerPoint;
+            userData.todayEarned += CONFIG.pointsPerAd * CONFIG.moneyPerPoint;
+            userData.totalEarned += CONFIG.pointsPerAd * CONFIG.moneyPerPoint;
+            userData.lastAdTime = Date.now();
             
-            // Generate ID if new
-            if (!userData.userId) {
-                userData.userId = 'EP' + Date.now().toString().slice(-8);
+            // Update streak
+            updateStreak();
+            
+            // Daily bonus
+            if (userData.dailyAds.count % 10 === 0) {
+                const bonus = 1; // bonus points
+                userData.points += bonus;
+                showNotification(`🎉 Daily bonus! +${bonus} extra points!`);
             }
-            
-            // Telegram Web App
-            if (typeof Telegram !== 'undefined') {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
-                Telegram.WebApp.setHeaderColor('#7C3AED');
-            }
-            
-            // Check daily reset
-            checkDailyReset();
-            
-            // Initialize Unity Ads
-            setTimeout(() => {
-                if (typeof unityAds !== 'undefined') {
-                    initializeUnityAds();
-                } else {
-                    loadUnitySDK();
-                }
-            }, 1000);
-            
-            // Update display
-            updateDisplay();
-            
-            // Welcome notification
-            setTimeout(() => showNotification('💎 Welcome to Earnly Pro!'), 1500);
         }
         
-        // ==================== OTHER FUNCTIONS ====================
-        function showNotification(message) {
-            const notif = document.getElementById('notification');
-            notif.textContent = message;
-            notif.style.display = 'block';
-            
-            // Auto hide
-            setTimeout(() => {
-                notif.style.display = 'none';
-            }, 3000);
-        }
-        
-        function saveData() {
-            localStorage.setItem('earnlyProData', JSON.stringify(userData));
-        }
-        
+        // Update Display
         function updateDisplay() {
-            // Update all values
-            document.getElementById('balance').textContent = parseFloat(userData.balance).toFixed(4);
+            // Format numbers
+            document.getElementById('balance').textContent = userData.balance.toFixed(2);
             document.getElementById('points').textContent = userData.points.toFixed(1);
-            document.getElementById('todayEarned').textContent = (userData.todayEarned * CONFIG.moneyPerPoint).toFixed(4);
+            document.getElementById('todayEarned').textContent = userData.todayEarned.toFixed(2);
             document.getElementById('adsCount').textContent = userData.adsWatched;
-            document.getElementById('totalEarned').textContent = (userData.totalEarned * CONFIG.moneyPerPoint).toFixed(2);
+            document.getElementById('totalEarned').textContent = userData.totalEarned.toFixed(2);
             document.getElementById('referrals').textContent = userData.referrals;
             document.getElementById('withdrawn').textContent = userData.withdrawn.toFixed(2);
             document.getElementById('streak').textContent = userData.streak;
             
-            // Update ad progress
+            // Daily progress
             const count = userData.dailyAds.count;
             const limit = CONFIG.dailyAdLimit;
             const progress = (count / limit) * 100;
-            const remaining = 339.292 - (progress * 339.292 / 100);
             
             document.getElementById('dailyCount').textContent = `${count}/${limit}`;
             document.getElementById('progressText').textContent = `${Math.round(progress)}%`;
-            document.getElementById('ringPercent').textContent = `${Math.round(progress)}%`;
+            document.getElementById('progressFill').style.width = `${progress}%`;
             
-            // Update progress ring
-            const circle = document.querySelector('.progress-ring circle:nth-child(2)');
-            if (circle) {
-                circle.style.strokeDashoffset = remaining;
+            // Progress message
+            const progressLabel = document.getElementById('progressLabel');
+            if (progress >= 100) {
+                progressLabel.textContent = '🎉 Daily goal achieved!';
+                progressLabel.style.color = '#10B981';
+            } else if (progress >= 75) {
+                progressLabel.textContent = '🔥 Almost there! Keep going!';
+                progressLabel.style.color = '#F59E0B';
+            } else if (progress >= 50) {
+                progressLabel.textContent = '🚀 Halfway done!';
+                progressLabel.style.color = '#F59E0B';
+            } else if (progress >= 25) {
+                progressLabel.textContent = '👍 Good progress!';
+                progressLabel.style.color = '#7C3AED';
+            } else {
+                progressLabel.textContent = '💪 Start watching ads to earn!';
+                progressLabel.style.color = '#64748B';
             }
         }
         
+        // Update Sections
+        function updateSections() {
+            // Withdraw section
+            document.getElementById('withdrawBalance').textContent = userData.balance.toFixed(2);
+            
+            // Stats section
+            document.getElementById('statAds').textContent = userData.adsWatched;
+            document.getElementById('statPoints').textContent = userData.points.toFixed(1);
+            document.getElementById('referralCount').textContent = userData.referrals;
+            
+            // Join date
+            const joinDate = new Date(userData.joinDate);
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            document.getElementById('statCreated').textContent = joinDate.toLocaleDateString('en-US', options);
+        }
+        
+        // Check Daily Reset
         function checkDailyReset() {
             const today = new Date().toDateString();
             if (userData.dailyAds.date !== today) {
                 userData.dailyAds.date = today;
                 userData.dailyAds.count = 0;
                 userData.todayEarned = 0;
+                
+                // Streak check
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStr = yesterday.toDateString();
+                const lastAdDate = localStorage.getItem('lastAdDate');
+                
+                if (lastAdDate === yesterdayStr) {
+                    // Maintain streak
+                } else if (lastAdDate !== today) {
+                    // Streak broken notification
+                    if (userData.streak > 1) {
+                        showNotification('💔 Streak broken! Start a new streak today!');
+                    }
+                    userData.streak = 1;
+                }
+                
                 saveData();
             }
         }
         
+        // Update Streak
         function updateStreak() {
             const today = new Date().toDateString();
             const lastDate = localStorage.getItem('lastAdDate');
@@ -458,6 +1123,13 @@
                 
                 if (diff === 1) {
                     userData.streak++;
+                    
+                    // Streak bonus
+                    if (userData.streak % 7 === 0) {
+                        const bonus = 5; // weekly bonus points
+                        userData.points += bonus;
+                        showNotification(`🔥 ${userData.streak} day streak! +${bonus} bonus points!`);
+                    }
                 } else if (diff > 1) {
                     userData.streak = 1;
                 }
@@ -466,18 +1138,219 @@
             localStorage.setItem('lastAdDate', today);
         }
         
-        function showSection(sectionId) {
-            // Hide all
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        // Show Notification
+        function showNotification(message) {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.style.display = 'block';
             
-            // Show selected
-            document.getElementById(sectionId)?.classList.add('active');
-            event.target.closest('.nav-btn')?.classList.add('active');
+            // Auto hide
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
         }
         
-        // Start app
+        // Save Data
+        function saveData() {
+            try {
+                localStorage.setItem('earnlyProData', JSON.stringify(userData));
+            } catch (e) {
+                console.error('Error saving data:', e);
+            }
+        }
+        
+        // Show Section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            // Remove active from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            
+            // Show selected section
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.classList.add('active');
+            }
+            
+            // Update nav button
+            const btn = event.target.closest('.nav-btn');
+            if (btn) {
+                btn.classList.add('active');
+            }
+            
+            // Update section data
+            updateSections();
+        }
+        
+        // Copy Referral Link
+        function copyReferralLink() {
+            const link = `https://t.me/${CONFIG.botUsername}?start=${userData.userId}`;
+            
+            // Try clipboard API
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(link).then(() => {
+                    showNotification('✅ Referral link copied!');
+                }).catch(() => {
+                    copyFallback(link);
+                });
+            } else {
+                copyFallback(link);
+            }
+        }
+        
+        function copyFallback(link) {
+            const textarea = document.createElement('textarea');
+            textarea.value = link;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showNotification('✅ Referral link copied!');
+        }
+        
+        // Show Referral
+        function showReferral() {
+            showSection('referral');
+        }
+        
+        // Show Withdraw
+        function showWithdraw() {
+            showSection('withdraw');
+        }
+        
+        // Request Withdraw
+        function requestWithdraw() {
+            if (userData.points < CONFIG.minWithdrawal) {
+                showNotification(`❌ Minimum ${CONFIG.minWithdrawal} points required (৳20)`);
+                return;
+            }
+            
+            // Calculate amount
+            const points = userData.points;
+            const amount = points * CONFIG.moneyPerPoint;
+            const fee = amount * (CONFIG.withdrawalFee / 100);
+            const netAmount = amount - fee;
+            
+            // Show confirmation
+            const confirmed = confirm(
+                `Withdrawal Details:\n\n` +
+                `Points: ${points.toFixed(1)}\n` +
+                `Amount: ৳${amount.toFixed(2)}\n` +
+                `Fee (${CONFIG.withdrawalFee}%): ৳${fee.toFixed(2)}\n` +
+                `Net Amount: ৳${netAmount.toFixed(2)}\n\n` +
+                `Continue?`
+            );
+            
+            if (confirmed) {
+                // In real app, this would send to server
+                userData.withdrawn += netAmount;
+                userData.points = 0;
+                userData.balance = 0;
+                
+                saveData();
+                updateDisplay();
+                updateSections();
+                
+                showNotification(`✅ Withdrawal request sent! ৳${netAmount.toFixed(2)} will be processed.`);
+                
+                // Show message for real implementation
+                setTimeout(() => {
+                    alert(
+                        '⚠️ Important Note:\n\n' +
+                        'This is a demo version. In real app:\n' +
+                        '1. Connect payment gateway (bKash/Nagad)\n' +
+                        '2. Add admin panel for approval\n' +
+                        '3. Implement fraud detection\n' +
+                        '4. Add transaction history\n\n' +
+                        'For now, withdrawal is simulated.'
+                    );
+                }, 1000);
+            }
+        }
+        
+        // Reset Data
+        function resetData() {
+            const confirmed = confirm('Are you sure? All your data will be lost!');
+            if (confirmed) {
+                localStorage.removeItem('earnlyProData');
+                localStorage.removeItem('lastAdDate');
+                
+                // Reset user data
+                userData = {
+                    userId: 'EP' + Date.now().toString().slice(-8) + Math.random().toString(36).substr(2, 4).toUpperCase(),
+                    balance: 0,
+                    points: 0,
+                    adsWatched: 0,
+                    todayEarned: 0,
+                    totalEarned: 0,
+                    withdrawn: 0,
+                    referrals: 0,
+                    dailyAds: { date: new Date().toDateString(), count: 0 },
+                    streak: 1,
+                    joinDate: new Date().toISOString(),
+                    lastAdTime: 0
+                };
+                
+                // Update referral link
+                document.getElementById('referralLink').textContent = 
+                    `https://t.me/${CONFIG.botUsername}?start=${userData.userId}`;
+                
+                updateDisplay();
+                updateSections();
+                saveData();
+                
+                showNotification('🔄 Data reset successfully!');
+            }
+        }
+        
+        // Export Data
+        function exportData() {
+            const dataStr = JSON.stringify(userData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `earnly-data-${userData.userId}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('💾 Data exported successfully!');
+        }
+        
+        // Show Support
+        function showSupport() {
+            alert(
+                'Contact Support:\n\n' +
+                'Email: support@earnlypro.com\n' +
+                'Telegram: @Earnly_Official_bot\n' +
+                'Website: Coming soon...\n\n' +
+                'For issues:\n' +
+                '1. Ad not working\n' +
+                '2. Withdrawal problem\n' +
+                '3. Account issue\n' +
+                '4. Bug report'
+            );
+        }
+        
+        // Start App
         window.onload = init;
+        
+        // Handle visibility change (for mobile)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                checkDailyReset();
+                updateDisplay();
+            }
+        });
+        // ========== JAVASCRIPT END ==========
     </script>
 </body>
-</html>
+                                        </html>
